@@ -1,2 +1,6 @@
-# tello-face-recognition
-Ryze Tello drone with Face Recognition using Python and OpenCV
+# Drone Computer vision
+A collection of drone object standardize so it can be implemented easily regardless of what ever the drone is.
+
+### Supported Drones
+* Ryze Tello
+* DJI Spark (soon)
