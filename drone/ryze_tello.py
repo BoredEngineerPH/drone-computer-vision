@@ -92,6 +92,20 @@ class Drone(object):
         if self.drone.is_flying is True:
             self.drone.move_down(y)
 
+    def forward(self, x: int):
+        """Move drone forward
+        Arguments:
+            x: 20-500
+        """
+        self.drone.move_forward(x)
+
+    def backward(self, x: int):
+        """Move drone backward
+        Arguments:
+            x: 20-500
+        """
+        self.drone.move_back(x)
+
     def left(self, x: int):
         """Move left
         Arguments:
