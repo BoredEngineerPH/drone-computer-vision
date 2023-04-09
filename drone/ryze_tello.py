@@ -52,20 +52,28 @@ class Drone(object):
         """
         self.drone.set_speed(speed)
 
-    def take_off(self, height: int):
+    def take_off(self, initial_height=None):
         """Take off to a certain height
         Arguments:
-            height: 20-500
+            initial_height: 20-500
         """
         if self.drone.is_flying is not True:
             self.drone.takeoff()
-            time.sleep(2)  # Let's put delay before we start climbing. Default 2 seconds
-            self.drone.move_up(height)
+            if initial_height is not None:
+                time.sleep(2)  # Let's put delay before we start climbing. Default 2 seconds
+                self.drone.move_up(initial_height)
 
-    def land(self):
+
+
+    def land(self, delay=None):
         """Land the aircraft
+        Arguments
+            delay: 1-10
         """
         if self.drone.is_flying is True:
+            if delay is not None:
+                time.sleep(delay)
+
             self.drone.land()
 
     def up(self, y: int):
