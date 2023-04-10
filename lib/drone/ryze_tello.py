@@ -129,3 +129,4 @@ class Drone(AbstractDroneBase):
     def get_altitude(self):
         if self.parent.is_connected is True:
             return self.DRONE.get_barometer()
+        

@@ -118,16 +118,14 @@ class DroneController(object):
             for event in pygame.event.get():
                 if event.type == pygame.USEREVENT + 1:
                     self.send_rc_command()
-                elif event.type == pygame.QUIT:
-                    self.DRONE.bye()
-                    sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == self.KEY_QUIT:
-                        should_stop = True
-                    else:
-                        self.keydown(event.key)
+                    self.keydown(event.key)
                 elif event.type == pygame.KEYUP:
-                    self.keyup(event.key)
+                    if event.key == self.KEY_QUIT:
+                        self.DRONE.bye()
+                        sys.exit()
+                    else:
+                        self.keyup(event.key)
 
             if frame_read.stopped:
                 break
@@ -137,10 +135,10 @@ class DroneController(object):
             frame = frame_read.frame
 
             # Add drone stats to display
-            text = "Bat: {battery}%, Temp: {temp}°C, Alt: {alt}cm".format(battery=self.DRONE.get_battery(),
-                                                                          temp=self.DRONE.get_temperature(),
-                                                                          alt=self.DRONE.get_altitude())
-            cv2.putText(frame, text, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            txt_stats = "Bat: {battery}%, Temp: {temp}C, Alt: {alt}cm".format(battery=str(self.DRONE.get_battery()),
+                                                                              temp=str(int(self.DRONE.get_temperature())),
+                                                                              alt=str(self.DRONE.get_altitude()))
+            cv2.putText(frame, txt_stats, (5, 720 - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 1)
 
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = np.rot90(frame)
