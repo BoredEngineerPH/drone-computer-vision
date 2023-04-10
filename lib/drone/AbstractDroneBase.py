@@ -398,3 +398,17 @@ class AbstractDroneBase(ABC):
             v: 20-500
         """
         pass
+
+    # +--------------------------------------------------------------+
+    # Abstract video streaming methods
+    # +--------------------------------------------------------------+
+
+    @abstractmethod
+    def start_video_streaming(self):
+        """Start video streaming"""
+        pass
+
+    @abstractmethod
+    def stop_video_streaming(self):
+        """Stop video streaming"""
+        pass

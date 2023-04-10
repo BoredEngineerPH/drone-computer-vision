@@ -93,3 +93,12 @@ class Drone(AbstractDroneBase):
     def rotate_cw(self, v: int):
         if self.parent.can_we_fly() is True:
             self.DRONE.rotate_clockwise(v)
+
+    def start_video_streaming(self):
+        if self.parent.is_connected() is True:
+            self.DRONE.streamoff()  # Just incase it was never closed properly
+            self.DRONE.streamon()
+
+    def end_video_streaming(self):
+        if self.parent.is_connected() is True:
+            self.DRONE.streamoff()
