@@ -366,7 +366,6 @@ class AbstractDroneBase(ABC):
         """
         pass
 
-
     @abstractmethod
     def left(self, v: int):
         """Move aircraft to left a/k/a Roll Left
@@ -402,7 +401,6 @@ class AbstractDroneBase(ABC):
     # +--------------------------------------------------------------+
     # Abstract video streaming methods
     # +--------------------------------------------------------------+
-
     @abstractmethod
     def start_video_streaming(self):
         """Start video streaming"""
@@ -411,4 +409,9 @@ class AbstractDroneBase(ABC):
     @abstractmethod
     def stop_video_streaming(self):
         """Stop video streaming"""
+        pass
+
+    @abstractmethod
+    def get_video_frames(self):
+        """Get video stream frames"""
         pass

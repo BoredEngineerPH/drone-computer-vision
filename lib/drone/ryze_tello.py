@@ -14,6 +14,7 @@ from lib.drone.AbstractDroneBase import AbstractDroneBase
 class Drone(AbstractDroneBase):
     DRONE = None
     parent = None
+    __VIDEO_STREAM_FRAMES = None
 
     def hello(self):
         self.parent = super()
@@ -98,7 +99,15 @@ class Drone(AbstractDroneBase):
         if self.parent.is_connected() is True:
             self.DRONE.streamoff()  # Just incase it was never closed properly
             self.DRONE.streamon()
+            # Let's update the flag so any function that requires video frame
+            # is aware of
+            self.parent.im_video_streaming(True)
 
-    def end_video_streaming(self):
+    def stop_video_streaming(self):
         if self.parent.is_connected() is True:
             self.DRONE.streamoff()
+            self.parent.im_video_streaming(False)
+
+    def get_video_frames(self):
+        if self.parent.is_connected() is True and self.parent.is_video_streaming():
+            return self.DRONE.get_frame_read()
