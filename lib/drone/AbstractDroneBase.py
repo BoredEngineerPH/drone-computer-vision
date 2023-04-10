@@ -15,8 +15,8 @@ class AbstractDroneBase(ABC):
     # +--------------------------------------------------------------+
     DRONE_SPEED = 10  # Speed of your drone
     MIN_TAKE_OFF_HEIGHT = 70  # Lowest take-off height of drone, anything below this will not be applied
-    LOW_BATT_THRESHOLD = 5  # Lowest battery percent anything below it will not fly
-    HIGH_TEMP_THRESHOLD = 30.0  # Highest temperature (HOT) anything above it will not fly, value in Celsius
+    LOW_BATT_THRESHOLD = 10  # Lowest battery percent anything below it will not fly
+    HIGH_TEMP_THRESHOLD = 80.0  # Highest temperature (HOT) anything above it will not fly, value in Celsius
     LOW_TEMP_THRESHOLD = 5.0  # Lowest temperature (COLD) anything below it will not fly, value in Celsius
 
     # +--------------------------------------------------------------+
@@ -36,7 +36,7 @@ class AbstractDroneBase(ABC):
     __LOGGER = None  # Logger instance
 
     # +--------------------------------------------------------------+
-    # Protected conditional flags
+    # Private conditional flags
     # +--------------------------------------------------------------+
     __IS_CONNECTED = False
     __IS_FLYING = False
@@ -93,30 +93,32 @@ class AbstractDroneBase(ABC):
     # +--------------------------------------------------------------+
     # Conditional Statements
     # +--------------------------------------------------------------+
+    @property
     def can_we_fly(self):
         """Pre-flight check if the drone is capable of flying
         this also ensure that the drone will not get damage
         Return:
             boolean
         """
-        if self.__IS_CONNECTED is not True:
+        if self.is_connected is not True:
             self.log(self.LOGM_NOT_CONNECTED)
             return False
-        elif self.__IS_FLYING is True:
+        elif self.is_flying is True:
             self.log(self.LOGM_ALREADY_FLYING)
             return False
-        elif self.__IS_LOWBAT is True:
+        elif self.is_low_battery is True:
             self.log(self.LOGM_LOWBAT)
             return False
-        elif self.__IS_HOT is True:
+        elif self.is_over_heating is True:
             self.log(self.LOGM_HOT)
             return False
-        elif self.__IS_COLD is True:
+        elif self.is_cold is True:
             self.log(self.LOGM_COLD)
             return False
         else:
             return True
 
+    @property
     def can_we_land(self):
         """Pre-landing checklists to check there is no obstraction when landing
         the aircraft
@@ -149,6 +151,11 @@ class AbstractDroneBase(ABC):
         if telemetry == 'drone_firmware_version':
             self.__TELEMETRY_DRONE_FIRMWARE_VERSION = value
 
+    @abstractmethod
+    def update_telemetry(self):
+        """Update all telemetry"""
+        pass
+
     def info(self):
         """Prints drone information
         """
@@ -178,6 +185,7 @@ class AbstractDroneBase(ABC):
         """
         self.__IS_CONNECTED = x
 
+    @property
     def is_connected(self):
         """Check if we are already connected to the drone object
         Return:
@@ -192,6 +200,7 @@ class AbstractDroneBase(ABC):
         """
         self.__IS_FLYING = x
 
+    @property
     def is_flying(self):
         """Check if we are already flying
         Return:
@@ -199,55 +208,47 @@ class AbstractDroneBase(ABC):
         """
         return self.__IS_FLYING
 
-    def im_low_battery(self, x: bool):
-        """Set __IS_HOT flag
-        Parameters:
-            x: bool
-        """
-        self.__IS_LOWBAT = x
-
+    @property
     def is_low_battery(self):
         """Check if drone is low battery
         Return:
             boolean
         """
-        return self.__IS_LOWBAT
+        if self.__TELEMETRY_BATTERY_PERC < self.LOW_BATT_THRESHOLD:
+            return True
+        else:
+            return False
 
-    def im_over_heating(self, x: bool):
-        """Set __IS_HOT flag
-        Parameters:
-            x: bool
-        """
-        self.__IS_HOT = x
-
+    @property
     def is_over_heating(self):
         """Check if drone is overheating
         Return:
             boolean
         """
-        return self.__IS_HOT
+        if self.__TELEMETRY_HIGH_TEMP > self.HIGH_TEMP_THRESHOLD:
+            return True
+        else:
+            return False
 
-    def im_cold(self, x: bool):
-        """Set __IS_COLD flag
-        Parameters:
-            x: bool
-        """
-        self.__IS_COLD = x
-
+    @property
     def is_cold(self):
         """Check if drone is too cold to function
         Return:
             boolean
         """
-        return self.__IS_COLD
+        if self.__TELEMETRY_LOW_TEMP < self.LOW_TEMP_THRESHOLD:
+            return True
+        else:
+            return False
 
-    def im_landing(self, x: bool):
+    def i_can_land(self, x: bool):
         """Set __IS_SAFE_TO_LAND flag
         Parameters:
             x: bool
         """
         self.__IS_SAFE_TO_LAND = x
 
+    @property
     def can_land(self):
         """Check if drone is safe to land
         Return:
@@ -262,6 +263,7 @@ class AbstractDroneBase(ABC):
         """
         self.__NO_VIDEO_STREAM = x
 
+    @property
     def is_video_streaming(self):
         """Check if drone is safe to land
         Return:
@@ -383,7 +385,7 @@ class AbstractDroneBase(ABC):
         pass
 
     @abstractmethod
-    def rotate_ccw(self, v: int):
+    def rotate_left(self, v: int):
         """Rotate aircrat counter-clockwise/left a/k/a Yaw Left
         Arguments:
             v: 20-500
@@ -391,10 +393,21 @@ class AbstractDroneBase(ABC):
         pass
 
     @abstractmethod
-    def rotate_cw(self, v: int):
+    def rotate_right(self, v: int):
         """Rotate aircrat clockwise/right a/k/a Yaw Right
         Arguments:
             v: 20-500
+        """
+        pass
+
+    @abstractmethod
+    def rc_command(self, roll: int, pitch: int, throttle: int, yaw: int):
+        """Send RC command via four channels.
+        Arguments:
+            roll: -100~100 (left/right)
+            pitch: -100~100 (forward/backward)
+            throttle: -100~100 (up/down)
+            yaw: -100~100 (yaw)
         """
         pass
 
@@ -414,4 +427,22 @@ class AbstractDroneBase(ABC):
     @abstractmethod
     def get_video_frames(self):
         """Get video stream frames"""
+        pass
+
+    # +--------------------------------------------------------------+
+    # Drone Stats
+    # +--------------------------------------------------------------+
+    @abstractmethod
+    def get_battery(self):
+        """Get battery statistics"""
+        pass
+
+    @abstractmethod
+    def get_temperature(self):
+        """Get average temperature"""
+        pass
+
+    @abstractmethod
+    def get_altitude(self):
+        """Get current drone altitude"""
         pass
