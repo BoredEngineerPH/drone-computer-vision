@@ -16,7 +16,7 @@ class AbstractDroneBase(ABC):
     DRONE_SPEED = 10  # Speed of your drone
     MIN_TAKE_OFF_HEIGHT = 70  # Lowest take-off height of drone, anything below this will not be applied
     LOW_BATT_THRESHOLD = 10  # Lowest battery percent anything below it will not fly
-    HIGH_TEMP_THRESHOLD = 30.0  # Highest temperature (HOT) anything above it will not fly, value in Celsius
+    HIGH_TEMP_THRESHOLD = 80.0  # Highest temperature (HOT) anything above it will not fly, value in Celsius
     LOW_TEMP_THRESHOLD = 5.0  # Lowest temperature (COLD) anything below it will not fly, value in Celsius
 
     # +--------------------------------------------------------------+
