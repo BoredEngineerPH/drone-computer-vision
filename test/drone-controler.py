@@ -70,12 +70,11 @@ class DroneController(object):
 
     def run(self):
 
+        # Initiate connection to drone object
         self.DRONE.hello()
+        # Start video streaming
+        self.DRONE.start_video_streaming()
 
-        # In case streaming is on. This happens when we quit this program without the escape key.
-        # 防止视频流已开启。这会在不使用ESC键退出的情况下发生。
-        self.tello.streamoff()
-        self.tello.streamon()
 
         frame_read = self.tello.get_frame_read()
 
