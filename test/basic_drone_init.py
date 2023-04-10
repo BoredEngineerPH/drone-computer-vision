@@ -1,11 +1,12 @@
-from drone.ryze_tello import Drone
+from lib.drone.ryze_tello import Drone
 import time
 
 drone = Drone()
-drone.connect()
+drone.hello()
+drone.info()
 # drone.speed(100)
-drone.take_off()
-drone.show_status()
+# drone.takeoff()
 # time.sleep(5)
-# drone.rotate('cw', 360)
+# drone.rotate_cw(360)
 # drone.land()
+drone.bye()
