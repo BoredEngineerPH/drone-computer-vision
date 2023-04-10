@@ -1,5 +1,5 @@
 numpy==1.22.0
 opencv-python==4.4.0.46
-djitellopy-reduced===2.4.0
+djitellopy===2.4.0
 pygame===2.3.0
 
