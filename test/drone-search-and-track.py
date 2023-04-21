@@ -72,7 +72,7 @@ class SeekAcquireTrack(object):
                 if self.IS_OBJECT_DETECTED is False:
                     if idx < 160:
                         idx = idx + 1
-                        if self.YAW_DIRECTION is 'left':
+                        if self.YAW_DIRECTION == 'left':
                             # self.DRONE.rc_command(0, 0, 0, -DRONE_SPEED)
                             self.DRONE.rotate_left(1)
                         else:
@@ -80,9 +80,9 @@ class SeekAcquireTrack(object):
                             self.DRONE.rotate_right(1)
                     else:
                         idx = 0
-                        if self.YAW_DIRECTION is 'left':
+                        if self.YAW_DIRECTION == 'left':
                             self.YAW_DIRECTION = 'right'
-                        elif self.YAW_DIRECTION is 'right':
+                        elif self.YAW_DIRECTION == 'right':
                             print('Where are you?')
                             time.sleep(5)
 
@@ -90,7 +90,7 @@ class SeekAcquireTrack(object):
                 if event.type == pygame.KEYUP:
                     if event.key == self.KEY_TAKEOFF:
                         self.IS_FLYING = True
-                        self.DRONE.takeoff(20)
+                        self.DRONE.takeoff()
                     elif event.key == self.KEY_LANDING:
                         self.IS_FLYING = False
                         self.DRONE.land()
